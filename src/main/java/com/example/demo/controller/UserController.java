@@ -22,34 +22,33 @@ import com.example.demo.service.UserService;
 
 import jakarta.validation.Valid;
 
-
-
 @RestController
-@RequestMapping("/api") //? Annotate controller class with base URL prefix
+@RequestMapping() // ? Annotate controller class with base URL prefix
 public class UserController {
-    //* Instance variables
-    private final UserService userService;  // ไม่ต้อง new UserService เนื่องจาก Spring จะสแกนคลาสที่มี annotation
+    // * Instance variables
+    private final UserService userService; // ไม่ต้อง new UserService เนื่องจาก Spring จะสแกนคลาสที่มี annotation
     private final UserResponse userResponse;
     private final UserMock userMock = new UserMock();
 
-    //* Constructor with dependency injection
-    @Autowired  //* Inject UserService instance into constructor parameter (ช่วยให้ Spring รู้ว่าจะ Inject Bean อะไร)
+    // * Constructor with dependency injection
+    @Autowired // * Inject UserService instance into constructor parameter (ช่วยให้ Spring
+               // รู้ว่าจะ Inject Bean อะไร)
     public UserController(UserService userService, UserResponse userResponse) {
         this.userService = userService;
         this.userResponse = userResponse;
     }
 
-    //? Mock endpoint เพื่อทดสอบการเรียกใช้งาน API
-    @GetMapping("/mock-all-users")  //* Annotate method as a GET request handler at "/mock-all-users" endpoint
-    //? Method returns an ArrayList containing mock data
+    // ? Mock endpoint เพื่อทดสอบการเรียกใช้งาน API
+    @GetMapping("/mock-all-users") // * Annotate method as a GET request handler at "/mock-all-users" endpoint
+    // ? Method returns an ArrayList containing mock data
     public ArrayList<Object> getMockUsers() {
         System.out.println("Endpoint /mock-all-users called");
         return userMock.getUserName();
     }
 
-    @GetMapping("/users")   //* Annotate method as a GET request handler at "/users" endpoint
-    //* Method to retrieve all users
-    //? Return type is List<User>, which represents the collection of User objects
+    @GetMapping("/users") // * Annotate method as a GET request handler at "/users" endpoint
+    // * Method to retrieve all users
+    // ? Return type is List<User>, which represents the collection of User objects
     public UserResponse getAllUsers() {
         System.out.println("Endpoint /users");
         List<User> users = userService.getAllUsers();
@@ -57,7 +56,8 @@ public class UserController {
         Long userCount = userService.countAllUsers();
         System.out.println("User count: " + userCount);
 
-        // UserResponse userRes = new UserResponse(users, userCount);  //* สร้าง object UserResponse จาก list user และจำนวน user ในกรณีไม่ได้ประกาศ Instance variable
+        // UserResponse userRes = new UserResponse(users, userCount); //* สร้าง object
+        // UserResponse จาก list user และจำนวน user ในกรณีไม่ได้ประกาศ Instance variable
         // return userRes;
 
         // ใช้ constructor ของ userResponse ที่ถูก inject มา
@@ -70,17 +70,18 @@ public class UserController {
     // http://localhost:8080/api/user/1
     @GetMapping("/user/{id}")
     public UserResponse getUserById(@PathVariable("id") long id) {
-        // Optional ใช้สำหรับการจัดการค่าที่อาจเป็น null เพื่อหลีกเลี่ยงการเกิด NullPointerException
+        // Optional ใช้สำหรับการจัดการค่าที่อาจเป็น null เพื่อหลีกเลี่ยงการเกิด
+        // NullPointerException
         Optional<User> user = userService.findUserById(id);
         System.out.println("Endpoint /user/" + id);
-        
+
         if (user.isPresent()) {
             // ถ้าพบผู้ใช้ ให้ return UserResponse ที่มี users เป็น list ของ user ที่พบ
             List<User> users = new ArrayList<>();
-            users.add(user.get());  // เพิ่ม user ที่ค้นหาได้เข้าไปใน list
-            return new UserResponse(users, (long) users.size());  // ส่งกลับ UserResponse
+            users.add(user.get()); // เพิ่ม user ที่ค้นหาได้เข้าไปใน list
+            return new UserResponse(users, (long) users.size()); // ส่งกลับ UserResponse
         } else {
-            return new UserResponse(new ArrayList<>(), 0L);  // ถ้าไม่พบ user, ส่งกลับ list ว่างและ userCount เป็น 0
+            return new UserResponse(new ArrayList<>(), 0L); // ถ้าไม่พบ user, ส่งกลับ list ว่างและ userCount เป็น 0
         }
     }
 
@@ -102,27 +103,9 @@ public class UserController {
     }
 
     @PutMapping("edit-user/{id}")
-    public ResponseEntity<UserResponse> editUserById(@PathVariable long id, @RequestBody User user) {
-        Optional<User> existingUser = userService.findUserById(id);
+    public ResponseEntity<?> editUserById(@PathVariable long id, @RequestBody User user) {
+        userService.editUser(id, user);
 
-        if (!existingUser.isPresent()) {
-            throw new RuntimeException("User not found");
-        }
-
-        User updatedUser = existingUser.get();
-        // อัปเดตข้อมูลผู้ใช้
-        updatedUser.setUsername(user.getUsername());
-        updatedUser.setPassword(user.getPassword());
-
-        // บันทึกการอัปเดต
-        userService.saveUser(updatedUser);
-
-        // ส่งคืนผลลัพธ์
-        List<User> users = new ArrayList<>();
-        users.add(updatedUser);  
-        
-        UserResponse response = new UserResponse(users, (long) users.size());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok("User edited successfully");
     }
 }
