@@ -13,7 +13,7 @@ import com.example.demo.repository.UserRepository;
 
 @Service
 
-public class ProductService {
+public class ProductService implements IProductService {
     // Instance of ProductRepository
     @Autowired
     private final UserRepository userRepository;
@@ -26,17 +26,20 @@ public class ProductService {
     }
 
     // Method to retrieve all products from the repository
+    @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     // Method to retrieve a specific product by its ID
+    @Override
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
     // Method to create a new product
+    @Override
     public Product createProduct(Product product, Long userId) {
         // ค้นหา User จากฐานข้อมูล
         User user = userRepository.findById(userId)
@@ -49,11 +52,13 @@ public class ProductService {
     }
 
     // Method to delete a product by its ID
+    @Override
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
 
     // Method to update an existing product
+    @Override
     public Product updateProduct(Long productId, Product productRequest) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
