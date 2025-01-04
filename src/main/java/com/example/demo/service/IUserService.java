@@ -15,7 +15,7 @@ public interface IUserService {
 
     Long countAllUsers();
 
-    void createUser(String username, String password);
+    User createUser(String username, String password);
 
     void deleteUserById(Long userId);
 

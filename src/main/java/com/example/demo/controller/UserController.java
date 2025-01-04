@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestBody User user) {
         System.out.println("Endpoint /user/create");
         System.out.println("Username: " + user.getUsername());
         System.out.println("Password: " + user.getPassword());

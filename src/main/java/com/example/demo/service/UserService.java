@@ -41,14 +41,14 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void createUser(String username, String password) {
+    public User createUser(String username, String password) {
         // สร้าง User entity จากข้อมูลที่รับมา
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
 
         // บันทึก User entity ลงในฐานข้อมูล
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override

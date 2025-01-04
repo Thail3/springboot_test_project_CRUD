@@ -18,7 +18,7 @@ import com.example.demo.entity.SpacificProduct;
 import com.example.demo.service.ProductService;
 
 @RestController
-@RequestMapping("/api") // ? Annotate controller class with base URL prefix
+@RequestMapping() // ? Annotate controller class with base URL prefix
 public class ProductController {
     // * Instance variables
     private final ProductService productService;
