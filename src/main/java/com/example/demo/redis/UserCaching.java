@@ -3,11 +3,13 @@ package com.example.demo.redis;
 import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.dto.UserResponse;
 import com.example.demo.entity.User;
 
 // ส่วนโค้ด	หน้าที่
@@ -63,5 +65,35 @@ public class UserCaching {
         // Logging
         System.out.println("Cached user with ID: " + user.getId());
         System.out.println(redisTemplate.opsForValue().get(cacheKey));
+    }
+
+    @AfterReturning(
+        pointcut = "execution(* com.example.demo.service.UserService.editUser(..))", 
+        returning = "userResponse")
+    public void cacheEditUser(JoinPoint joinPoint, UserResponse userResponse) {
+        // ดึงค่าอาร์กิวเมนต์จาก JoinPoint
+        Object[] args = joinPoint.getArgs();
+        long id = (long) args[0]; // ดึง id จากอาร์กิวเมนต์ตัวแรก
+        User user = ((UserResponse) userResponse).getUsers().get(0); // ดึง User จากผลลัพธ์
+        System.out.println("cacheEditUser is called! - id: " + id + "user: " + user);
+
+        if (id <= 0 || user == null) { // ตรวจสอบว่าไอดีผู้ใช้หรือ User เป็น null
+            System.err.println("Invalid arguments for editUser");
+            return;
+        }
+
+         // เก็บข้อมูลผู้ใช้ลง Redis
+        String cacheKey = "user:" + id;
+        redisTemplate.opsForValue().set(cacheKey, user);
+    }
+
+    @After("execution(* com.example.demo.service.UserService.deleteUserById(Long))")
+    public void deleteCacheUser(JoinPoint joinPoint) {
+        System.out.println("deleteCacheUser is called!");
+
+        Long userId = (Long) joinPoint.getArgs()[0]; // ดึงไอดีผู้ใช้จากอาร์กิวเมนต์
+        String cacheKey = "user:" + userId; // ใช้ไอดีผู้ใช้เป็น key ใน Redis
+
+        redisTemplate.delete(cacheKey); // ลบข้อมูลผู้ใช้ออกจาก Redis
     }
 }

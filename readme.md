@@ -35,3 +35,25 @@ brew services start mysql
 ```bash
 brew services stop mysql
 ```
+
+ใช้ docker สร้าง redis server
+```
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+```
+
+start server redis
+```
+docker start redis-stack-server
+```
+
+shell เข้าไปใน redis
+```
+docker exec -it redis-stack-server redis-cli
+```
+
+shell ดูข้อมูลใน redis 
+```
+คำสั่ง KEYS * 
+
+คำสั่ง GET user:<KEY>
+```
