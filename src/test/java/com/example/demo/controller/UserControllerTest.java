@@ -180,7 +180,7 @@ public class UserControllerTest {
         doNothing().when(userService).saveUser(argThat(user -> user.getId().equals(userIdToUpdate)));
 
         // เรียก method ใน Controller โดยส่ง User object
-        ResponseEntity<UserResponse> responseEntity = userController.editUserById(userIdToUpdate, updatedUser);
+        ResponseEntity<UserResponse> responseEntity = (ResponseEntity<UserResponse>) userController.editUserById(userIdToUpdate, updatedUser);
         System.out.println("responseEntity: " + responseEntity.getBody().getUsers());
 
         // ตรวจสอบผลลัพธ์
