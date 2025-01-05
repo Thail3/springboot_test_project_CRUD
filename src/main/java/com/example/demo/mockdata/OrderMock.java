@@ -66,6 +66,65 @@ public class OrderMock {
         return orders;
     }
 
+// Example JSON response for /api/mock-all-orders endpoint
+// [
+//     {
+//         "id": 1,
+//         "user": {
+//             "id": 1,
+//             "username": "user1",
+//             "password": "password1",
+//             "products": null,
+//             "orders": [
+//                 {
+//                     "id": 1,
+//                     "orderDate": "2025-01-01T10:00:00",
+//                     "orderItems": [
+//                         {
+//                             "id": 1,
+//                             "product": {
+//                                 "id": 1,
+//                                 "name": "Product A",
+//                                 "price": 100.0
+//                             },
+//                             "quantity": 2
+//                         }
+//                     ]
+//                 }
+//             ]
+//         },
+//         "orderDate": "2025-01-01T10:00:00"
+//     },
+//     {
+//         "id": 2,
+//         "user": {
+//             "id": 2,
+//             "username": "user2",
+//             "password": "password2",
+//             "products": null,
+//             "orders": [
+//                 {
+//                     "id": 2,
+//                     "orderDate": "2025-01-02T14:00:00",
+//                     "orderItems": [
+//                         {
+//                             "id": 2,
+//                             "product": {
+//                                 "id": 2,
+//                                 "name": "Product B",
+//                                 "price": 200.0
+//                             },
+//                             "quantity": 1
+//                         }
+//                     ]
+//                 }
+//             ]
+//         },
+//         "orderDate": "2025-01-02T14:00:00"
+//     }
+// ]
+
+
    // Mock Product creation
    private Product createMockProduct(Long id, String name, Double price) {
     Product product = new Product();
